@@ -7,14 +7,14 @@ namespace PostgresReader
 {
 
     /// <summary> 
-    /// PostgresReader version 1.0   by Elrey Velicaria 01/2023 
-    /// A simple command line utility to pull data from an Postgres Database.
-    /// 
-    /// Exit Code 0: Means empty result set. 
-    /// Exit Code 1: Means with results. 
-    /// Exit Code -1: Means error.  See error.log file created. 
-    /// 
-    /// </summary> 
+        /// PostgresReader version 1.0   by Elrey Velicaria 01/2023 
+        /// A simple command line utility to pull data from an Postgres Database.
+        /// 
+        /// Exit Code 0: Means empty result set. 
+        /// Exit Code 1: Means with results. 
+        /// Exit Code -1: Means error.  See error.log file created. 
+        /// Exit Code -2: Means Db error
+        /// </summary> 
     class Program
     {
 
@@ -63,7 +63,7 @@ namespace PostgresReader
                 table1 = "<table border=1>";
                 table2 = "</table>";
 
-                // get html banner tile from the out filename if it starts with H_  or H1_ , H2_  , etc for diff font size. 
+                // get html banner tile from the out filename if it starts with H_  or H1_ , H2_  , etc for diff font size. 
 
                 string n = Path.GetFileName(args[2]);
 
@@ -80,9 +80,21 @@ namespace PostgresReader
 
             }
 
+            string sqlfile = "SELECT version();";
 
             try
             {
+                if (args.Length == 0)
+                {
+                    help();
+                    return -1;
+                }
+
+
+                if (args.Length > 1)
+                {
+                    sqlfile = args[1];
+                }
 
 
                 string oradb = args[0];
@@ -98,15 +110,15 @@ namespace PostgresReader
                     NpgsqlCommand cmd = new NpgsqlCommand();
                     cmd.Connection = conn;
 
-                    if (File.Exists(args[1]))
+                    if (File.Exists(sqlfile))
                     {
-                        cmd.CommandText = File.ReadAllText(args[1]);
+                        cmd.CommandText = File.ReadAllText(sqlfile);
 
                     }
                     else
-                        cmd.CommandText = args[1];
+                        cmd.CommandText = sqlfile;
 
-                    log("Executing sql: " + args[1] + "...");
+                    log("Executing sql: " + sqlfile + "...");
 
                     cmd.CommandType = CommandType.Text;
 
@@ -219,11 +231,17 @@ namespace PostgresReader
 
 
             }
+            catch (PostgresException e)
+            {
+                Console.WriteLine("Sql Error: " + e.Message);
+                log("Sql Error: " + e.Message);
+                ret = -2;
+            }
             catch (Exception e)
             {
-                Console.WriteLine("Error: " + e.Message);
+                Console.WriteLine("Error: " + e.ToString());
+                log("Error: " + e.ToString());
                 help();
-                log("Error: " + e.Message);
 
                 ret = -1;
             }
@@ -241,19 +259,19 @@ namespace PostgresReader
 
             Console.WriteLine("---------------------------------------------------------------------------------------------------");
             Console.WriteLine("PostgresReader - A simple command line utility to pull data from a Postgres Database. ");
-            Console.WriteLine("Version {0}              Author: Elrey R. Velicaria (01/17/2023)    ", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
+            Console.WriteLine("Version {0}              Author: Elrey R. Velicaria (01/17/2023)    ", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
             Console.WriteLine("Syntax: PostgresReader.exe <ConnectionInfo> <SQLQuery> [OutputFile]");
             Console.WriteLine("Examples:");
-            Console.WriteLine("  Console output all params as  inline  : PostgresReader.exe \"conn string\" \"select * from.. \"");
-            Console.WriteLine("  Connect string in file, inline query  : PostgresReader.exe ConnStr.txt \"select * from product \"");
-            Console.WriteLine("  Console output with params in files   : PostgresReader.exe ConnStr.txt Query.sql");
-            Console.WriteLine("  Tab delimited  if out file is .txt    : PostgresReader.exe ConnStr.txt Query.sql ouput.txt");
-            Console.WriteLine("  Comma delimited if out file is .csv   : PostgresReader.exe ConnStr.txt Query.sql ouput.csv");
-            Console.WriteLine("  Html table formatted if  .htm or .html: PostgresReader.exe ConnStr.txt Query.sql ouput.htm");
-            Console.WriteLine("  Html table with banner def h2 format  : PostgresReader.exe ConnStr.txt Query.sql H_Table_A.htm");
-            Console.WriteLine("  Html with banner size format (H1..H5) : PostgresReader.exe ConnStr.txt Query.sql H1_Table_A.htm");
+            Console.WriteLine("  Console output all params as  inline  : PostgresReader.exe \"conn string\" \"select * from.. \"");
+            Console.WriteLine("  Connect string in file, inline query  : PostgresReader.exe ConnStr.txt \"select * from product \"");
+            Console.WriteLine("  Console output with params in files   : PostgresReader.exe ConnStr.txt Query.sql");
+            Console.WriteLine("  Tab delimited  if out file is .txt    : PostgresReader.exe ConnStr.txt Query.sql ouput.txt");
+            Console.WriteLine("  Comma delimited if out file is .csv   : PostgresReader.exe ConnStr.txt Query.sql ouput.csv");
+            Console.WriteLine("  Html table formatted if  .htm or .html: PostgresReader.exe ConnStr.txt Query.sql ouput.htm");
+            Console.WriteLine("  Html table with banner def h2 format  : PostgresReader.exe ConnStr.txt Query.sql H_Table_A.htm");
+            Console.WriteLine("  Html with banner size format (H1..H5) : PostgresReader.exe ConnStr.txt Query.sql H1_Table_A.htm");
             Console.WriteLine("Notes:");
-            Console.WriteLine("* DOS Exit Codes are:  0 = no rows,  1 = with rows,  -1 = error");
+            Console.WriteLine("* DOS Exit Codes are:  0 = no rows,  1 = with rows,  -1 = error");
             Console.WriteLine("* Logs to log.txt in a sub-folder named PostgresLog , if it exists.");
             Console.WriteLine("* Enjoy!");
             Console.WriteLine("---------------------------------------------------------------------------------------------------");
@@ -290,8 +308,8 @@ namespace PostgresReader
                 else if (t.Name == "Decimal")
                     s = string.Format("{0}", dr.GetDecimal(pos));
                 else if (t.Name == "String")
-                {   // csv will have double quotes on strings. 
-                    if (delimiter == ",")
+                {   // csv will have double quotes on strings. 
+                    if (delimiter == ",")
                         s = s = string.Format("\"{0}\"", dr.GetString(pos));
                     else
                         s = s = string.Format("{0}", dr.GetString(pos));
@@ -306,7 +324,7 @@ namespace PostgresReader
                         if (!GlobalError.Contains(msg)) GlobalError += ", " + msg;
                     }
                     s = "***"; // unsupported types 
-                }
+                }
 
                 if (s == "null" || s == "\"\"" || s == "\"null\"") s = "";
             }
@@ -342,4 +360,6 @@ namespace PostgresReader
     }
 
 }
+
+
 
