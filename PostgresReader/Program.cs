@@ -7,7 +7,7 @@ namespace PostgresReader
 {
 
     /// <summary> 
-    /// PostgresReader version 1.0   by Elrey Velicaria 10/2020 
+    /// PostgresReader version 1.0   by Elrey Velicaria 01/2023 
     /// A simple command line utility to pull data from an Oracle Database.
     /// 
     /// Exit Code 0: Means empty result set. 
