@@ -8,7 +8,7 @@ namespace PostgresReader
 
     /// <summary> 
     /// PostgresReader version 1.0   by Elrey Velicaria 01/2023 
-    /// A simple command line utility to pull data from an Oracle Database.
+    /// A simple command line utility to pull data from an Postgres Database.
     /// 
     /// Exit Code 0: Means empty result set. 
     /// Exit Code 1: Means with results. 
@@ -240,8 +240,8 @@ namespace PostgresReader
         {
 
             Console.WriteLine("---------------------------------------------------------------------------------------------------");
-            Console.WriteLine("PostgresReader - A simple command line utility to pull data from an Oracle Database. ");
-            Console.WriteLine("Version {0}              Author: Elrey R. Velicaria (10/1/2020)    ", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
+            Console.WriteLine("PostgresReader - A simple command line utility to pull data from a Postgres Database. ");
+            Console.WriteLine("Version {0}              Author: Elrey R. Velicaria (01/17/2023)    ", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
             Console.WriteLine("Syntax: PostgresReader.exe <ConnectionInfo> <SQLQuery> [OutputFile]");
             Console.WriteLine("Examples:");
             Console.WriteLine("  Console output all params as  inline  : PostgresReader.exe \"conn string\" \"select * from.. \"");
@@ -254,8 +254,8 @@ namespace PostgresReader
             Console.WriteLine("  Html with banner size format (H1..H5) : PostgresReader.exe ConnStr.txt Query.sql H1_Table_A.htm");
             Console.WriteLine("Notes:");
             Console.WriteLine("* DOS Exit Codes are:  0 = no rows,  1 = with rows,  -1 = error");
-            Console.WriteLine("* Logs to log.txt in a sub-folder named OracleExecLog , if it exists.");
-            Console.WriteLine("* Oracle client not required. It uses Oracle.ManagedDataAccess.dll as 'thin' driver library. Enjoy!");
+            Console.WriteLine("* Logs to log.txt in a sub-folder named PostgresLog , if it exists.");
+            Console.WriteLine("* Enjoy!");
             Console.WriteLine("---------------------------------------------------------------------------------------------------");
         }
 
@@ -264,7 +264,7 @@ namespace PostgresReader
         {
             try
             {
-                File.AppendAllText(".\\OracleExecLog\\log.txt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss ") + "OER: " + s + Environment.NewLine);
+                File.AppendAllText(".\\PostgresLog\\log.txt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss ") + "OER: " + s + Environment.NewLine);
             }
             catch
             {
