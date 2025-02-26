@@ -1,1 +1,1 @@
-Server=a201171-quickview-dev-dev-pg-cluster-us-east-1-inst.yyyyy.us-east-1.rds.amazonaws.com;Port=5432;Database=yyyyy;User Id=quickview_siud_user;Password=yyy;SslMode=Require;Trust Server Certificate=true;
+Server=a201171-xxxxxxxx-dev-dev-pg-cluster-us-east-1-inst.yyyyy.us-east-1.rds.amazonaws.com;Port=5432;Database=yyyyy;User Id=xxxxxx_siud_user;Password=yyy;SslMode=Require;Trust Server Certificate=true;
